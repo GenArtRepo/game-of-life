@@ -152,30 +152,40 @@ function mousePressed() {
     }
 }
 
+function calculate_borders(xi, yj){
+    if(xi >= columns) xi -= columns - 1;
+    if(yj >= rows) yj -= rows - 1;
+    if(xi < 0) xi += columns;
+    if(yj < 0) yj += rows;
+
+    return {xi, yj};
+}
+
 // The process of creating the new generation
 function generate() {
     // Loop through every spot in our 2D array and check spots neighbors
-    for (let x = 1; x < columns - 1; x++) {
-        for (let y = 1; y < rows - 1; y++) {
-        // Add up all the states in a 3x3 surrounding grid
-        let neighbors = 0;
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-            neighbors += board[x+i][y+j];
+    for (let x = 0; x < columns; x++) {
+        for (let y = 0; y < rows; y++) {
+            // Add up all the states in a 3x3 surrounding grid
+            let neighbors = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    let{ xi, yj } = calculate_borders(x+i, y+j);
+                    neighbors += board[xi][yj];
+                }
             }
-        }
-        neighbors -= board[x][y];
-        
-        // Rules of Life
-        // 1. Loneliness
-        if((board[x][y] == 1) && (neighbors <  2)) next[x][y] = 0;  
-        // 2. Overpopulation
-        else if ((board[x][y] == 1) && (neighbors >  3)) next[x][y] = 0;   
-        // 3. Reproduction
-        else if ((board[x][y] == 0) && (neighbors == 3)) next[x][y] = 1;  
-        // 4. Stasis
-        else next[x][y] = board[x][y]; 
-        }
+            neighbors -= board[x][y];
+            
+            // Rules of Life
+            // 1. Loneliness
+            if((board[x][y] == 1) && (neighbors <  2)) next[x][y] = 0;  
+            // 2. Overpopulation
+            else if ((board[x][y] == 1) && (neighbors >  3)) next[x][y] = 0;   
+            // 3. Reproduction
+            else if ((board[x][y] == 0) && (neighbors == 3)) next[x][y] = 1;  
+            // 4. Stasis
+            else next[x][y] = board[x][y]; 
+            }
     }
 
     // Swaping the states to the next generation
